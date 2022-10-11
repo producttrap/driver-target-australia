@@ -63,7 +63,7 @@ class TargetAustralia implements Driver
         //SKU
         $sku = null;
         try {
-            $sku = (string) Str::of($crawler->filter('.prod-code [itemprop="productID"]')->first()->text())->replace(' ', '');;
+            $sku = (string) Str::of($crawler->filter('.prod-code [itemprop="productID"]')->first()->text())->replace(' ', '');
         } catch (\Exception $e) {
         }
 
