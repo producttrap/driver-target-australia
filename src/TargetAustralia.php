@@ -8,12 +8,12 @@ use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Support\Str;
 use ProductTrap\Contracts\Driver;
 use ProductTrap\DTOs\Brand;
-use ProductTrap\DTOs\Currency;
 use ProductTrap\DTOs\Price;
 use ProductTrap\DTOs\Product;
 use ProductTrap\DTOs\Results;
 use ProductTrap\DTOs\UnitAmount;
 use ProductTrap\DTOs\UnitPrice;
+use ProductTrap\Enums\Currency;
 use ProductTrap\Enums\Status;
 use ProductTrap\Enums\Unit;
 use ProductTrap\Exceptions\ProductTrapDriverException;
@@ -49,7 +49,7 @@ class TargetAustralia implements Driver
         $html = $this->remember($identifier, now()->addDay(), fn () => $this->scrape($this->url($identifier)));
         $crawler = $this->crawl($html);
 
-        file_put_contents(base_path('temp.html'), (string) $html);
+        // file_put_contents(__DIR__ . '/temp.html', (string) $html);
 
         // Title
         $title = Str::of(
@@ -76,6 +76,9 @@ class TargetAustralia implements Driver
             identifier: $matches[1],
         ) : null;
 
+        // Currency
+        $currency = Currency::AUD;
+
         // Price
         $price = null;
         try {
@@ -87,13 +90,9 @@ class TargetAustralia implements Driver
         $price = ($price !== null)
             ? new Price(
                 amount: $price,
+                currency: $currency,
             )
             : null;
-
-        // Currency
-        $currency = new Currency(
-            code: 'AUD',
-        );
 
         // Images
         $images = [];
@@ -109,40 +108,26 @@ class TargetAustralia implements Driver
         $images = array_values(array_unique($images));
 
         // Status
-        $status = ($price !== null) ? Status::Unavailable : Status::Available;
-
-        // Unit Amount (e.g. 85g or 1kg)
-        $unitAmount = null;
-
-        // Unit Price (e.g. $2 per kg)
-        $unitPrice = null;
+        $status = ($price === null) ? Status::Unavailable : Status::Available;
 
         // URL
         $url = $crawler->filter('link[rel="canonical"]')->first()->attr('href');
 
-        $product = new Product([
-            'identifier' => $identifier,
-            'sku' => $sku,
-            'name' => $title,
-            'description' => $description,
-            'url' => $url,
-            'price' => $price,
-            'currency' => $currency,
-            'status' => $status,
-            'brand' => $brand,
-            'gtin' => $gtin,
-            'unitAmount' => $unitAmount,
-            'unitPrice' => $unitPrice,
-            'ingredients' => null,
-            'images' => $images,
-            'raw' => [
+        return new Product(
+            identifier: $identifier,
+            sku: $sku,
+            name: $title,
+            description: $description,
+            url: $url,
+            price: $price,
+            status: $status,
+            brand: $brand,
+            gtin: $gtin,
+            images: $images,
+            raw: [
                 'html' => $html,
             ],
-        ]);
-
-        dd($product);
-
-        return $product;
+        );
     }
 
     public function url(string $identifier): string
