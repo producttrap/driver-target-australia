@@ -26,7 +26,7 @@ use ProductTrap\ProductTrap;
 $target = $productTrap->driver('target_australia');
 
 $details = $target->find('ABC123');
-echo $details->unitPrice->format(); // $24.56 / 1KG
+echo $details->unitPrice->label(); // $24.56 / 1KG
 ```
 
 ## Change log
