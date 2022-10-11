@@ -23,7 +23,7 @@ composer require producttrap/driver-target-australia
 use ProductTrap\ProductTrap;
 
 /** @var ProductTrap $productTrap */
-$target = $productTrap->driver('target');
+$target = $productTrap->driver('target_australia');
 
 $details = $target->find('ABC123');
 echo $details->unitPrice->format(); // $24.56 / 1KG
