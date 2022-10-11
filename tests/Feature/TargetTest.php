@@ -31,7 +31,7 @@ it('can add the TargetAustralia driver to ProductTrap', function () {
 });
 
 it('can call the ProductTrap facade', function () {
-    expect(FacadesProductTrap::driver(TargetAustralia::IDENTIFIER)->getName())->toBe(TargetAustralia::IDENTIFIER);
+    expect(FacadesProductTrap::driver(TargetAustralia::IDENTIFIER)->getName())->toBe('Target Australia');
 });
 
 it('can retrieve the TargetAustralia driver from ProductTrap', function () {
@@ -42,34 +42,24 @@ it('can call `find` on the TargetAustralia driver and handle failed connection',
     getMockTargetAustralia($this->app, '');
 
     $this->app->make(Factory::class)->driver(TargetAustralia::IDENTIFIER)->find('7XX1000');
-})->throws(ApiConnectionFailedException::class, 'The connection to https://target.com.au/shop/productdetails/7XX1000 has failed for the TargetAustralia driver');
+})->throws(ApiConnectionFailedException::class, 'The connection to https://www.target.com.au/p/product/7XX1000 has failed for the Target Australia driver');
 
 it('can call `find` on the TargetAustralia driver and handle a successful response', function () {
     $html = file_get_contents(__DIR__.'/../fixtures/successful_response.html');
     getMockTargetAustralia($this->app, $html);
 
-    $data = $this->app->make(Factory::class)->driver(TargetAustralia::IDENTIFIER)->find('257360');
+    $data = $this->app->make(Factory::class)->driver(TargetAustralia::IDENTIFIER)->find('64183213');
     unset($data->raw);
 
-    expect($this->app->make(Factory::class)->driver(TargetAustralia::IDENTIFIER)->find('257360'))
+    expect($this->app->make(Factory::class)->driver(TargetAustralia::IDENTIFIER)->find('64183213'))
         ->toBeInstanceOf(Product::class)
-        ->identifier->toBe('257360')
+        ->identifier->toBe('64183213')
         ->status->toEqual(Status::Available)
-        ->name->toBe('John West Tuna Olive Oil Blend 95G')
-        ->description->toBe('Succulent chunk style tuna in an olive oil blend.')
-        ->ingredients->toBe('Purse seine caught skipjack *tuna* (Katsuwonus pelamis) (65%), water, olive oil (10%), sunflower oil, salt. Contains fish.')
-        ->price->amount->toBe(2.7)
-        ->unitAmount->unit->value->toBe('g')
-        ->unitAmount->amount->toBe(95.0)
-        ->unitPrice->unitAmount->unit->value->toBe('kg')
-        ->unitPrice->unitAmount->amount->toBe(1.0)
-        ->unitPrice->price->amount->toBe(28.42)
-        ->brand->name->toBe('John West')
+        ->name->toBe('Sony Extra Bass Wireless Speaker SRSXB23')
+        ->description->toBe('Take the party with you Compact, lightweight and easy to carry – wherever you’re heading, make the SRS-XB23 the first thing you pack. Whether you’re camping with friends or relaxing in the park, the compact and lightweight SRS-XB23 fits into your plans as easily as it fits into your bag.')
+        ->price->amount->toBe(85.0)
+        ->brand->name->toBe('Sony')
         ->images->toBe([
-            'https://cdn0.target.media/content/wowproductimages/large/257360.jpg',
-            'https://cdn0.target.media/content/wowproductimages/large/257360_1.jpg',
-            'https://cdn0.target.media/content/wowproductimages/large/257360_2.jpg',
-            'https://cdn0.target.media/content/wowproductimages/large/257360_5.jpg',
-            'https://cdn0.target.media/content/wowproductimages/large/257360_6.jpg',
+            // todo
         ]);
 });

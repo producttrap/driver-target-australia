@@ -33,7 +33,7 @@ class TargetAustralia implements Driver
 
     public function getName(): string
     {
-        return static::IDENTIFIER;
+        return 'Target Australia';
     }
 
     /**
@@ -61,7 +61,11 @@ class TargetAustralia implements Driver
         }
 
         //SKU
-        $sku = (string) Str::of($crawler->filter('.prod-code [itemprop="productID"]')->first()->text())->replace(' ', '');
+        $sku = null;
+        try {
+            $sku = (string) Str::of($crawler->filter('.prod-code [itemprop="productID"]')->first()->text())->replace(' ', '');;
+        } catch (\Exception $e) {
+        }
 
         // Gtin
         $gtin = null;
@@ -108,7 +112,11 @@ class TargetAustralia implements Driver
         $status = ($price === null) ? Status::Unavailable : Status::Available;
 
         // URL
-        $url = $crawler->filter('link[rel="canonical"]')->first()->attr('href');
+        $url = null;
+        try {
+            $url = $crawler->filter('link[rel="canonical"]')->first()->attr('href');
+        } catch (\Exception $e) {
+        }
 
         return new Product(
             identifier: $identifier,
