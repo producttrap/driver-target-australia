@@ -10,7 +10,6 @@ use ProductTrap\Contracts\Driver;
 use ProductTrap\DTOs\Brand;
 use ProductTrap\DTOs\Price;
 use ProductTrap\DTOs\Product;
-use ProductTrap\DTOs\Results;
 use ProductTrap\Enums\Currency;
 use ProductTrap\Enums\Status;
 use ProductTrap\Exceptions\ProductTrapDriverException;
@@ -138,15 +137,5 @@ class TargetAustralia implements Driver
     public function url(string $identifier): string
     {
         return self::BASE_URI.'/p/product/'.$identifier;
-    }
-
-    /**
-     * @param  array<string, mixed>  $parameters
-     *
-     * @throws ProductTrapDriverException
-     */
-    public function search(string $keywords, array $parameters = []): Results
-    {
-        return new Results();
     }
 }
